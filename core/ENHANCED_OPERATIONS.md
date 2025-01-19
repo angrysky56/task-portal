@@ -1,6 +1,177 @@
-# Enhanced Task Portal Operations Guide (Continued)
+# Enhanced Task Portal Operations Guide
 
-## Daily Operations Checklist (Continued)
+## Component Management
+
+### 1. Logical Processor Operations
+
+```python
+async def monitor_logical_processor():
+    # Check logical processing states
+    states = await read_query("""
+        SELECT process_id,
+               logical_analysis_state,
+               intuition_state,
+               confidence_metrics
+        FROM logical_processor_state
+        WHERE json_extract(logical_analysis_state, '$.status') = 'ACTIVE'
+    """)
+    
+    for state in states:
+        # Monitor component health
+        await verify_component_health('LA', state)
+        await verify_component_health('EI', state)
+        await verify_component_health('AR', state)
+        await verify_component_health('LI', state)
+```
+
+### 2. Meta Framework Operations
+
+```python
+async def monitor_meta_framework():
+    # Check framework states
+    frameworks = await read_query("""
+        SELECT framework_id,
+               principle_of_inquiry,
+               adaptation_metrics
+        FROM meta_process_framework
+        WHERE adaptation_metrics < 0.8
+    """)
+    
+    for framework in frameworks:
+        # Analyze framework health
+        await analyze_framework_health(framework)
+        
+        # Apply framework adaptations
+        await adapt_framework(framework)
+```
+
+### 3. IntelliSynth Operations
+
+```python
+async def monitor_intellisynth():
+    # Check IntelliSynth operations
+    operations = await read_query("""
+        SELECT operation_id,
+               actor_state,
+               evaluator_state,
+               advancement_metrics
+        FROM intellisynth_operations
+        WHERE json_extract(advancement_metrics, '$.value') < 0.7
+    """)
+    
+    for operation in operations:
+        # Execute advancement procedures
+        await advance_operation(operation)
+```
+
+## Enhanced Health Checks
+
+### 1. Component Status Verification
+
+```python
+async def verify_system_health():
+    # Check logical processor health
+    logical_health = await read_query("""
+        SELECT AVG(confidence_metrics) as avg_confidence
+        FROM logical_processor_state
+        WHERE created_at >= datetime('now', '-1 hour')
+    """)
+    
+    # Check meta framework health
+    framework_health = await read_query("""
+        SELECT AVG(adaptation_metrics) as avg_adaptation
+        FROM meta_process_framework
+        WHERE adaptation_metrics IS NOT NULL
+    """)
+    
+    # Check IntelliSynth health
+    intellisynth_health = await read_query("""
+        SELECT json_extract(advancement_metrics, '$.value') as advancement
+        FROM intellisynth_operations
+        WHERE created_at >= datetime('now', '-1 hour')
+    """)
+    
+    return {
+        "logical_health": logical_health,
+        "framework_health": framework_health,
+        "intellisynth_health": intellisynth_health
+    }
+```
+
+## Enhanced Error Recovery
+
+### 1. Logical Processing Recovery
+
+```python
+async def recover_logical_processor():
+    # Identify failed logical processes
+    failed_processes = await read_query("""
+        SELECT process_id
+        FROM logical_processor_state
+        WHERE json_extract(logical_analysis_state, '$.status') = 'FAILED'
+    """)
+    
+    for process in failed_processes:
+        # Reset logical processor state
+        await write_query("""
+            UPDATE logical_processor_state
+            SET logical_analysis_state = ?,
+                intuition_state = ?,
+                confidence_metrics = 0.0
+            WHERE process_id = ?
+        """, [
+            json.dumps({"status": "RESET"}),
+            json.dumps({"confidence": 0.0}),
+            process['process_id']
+        ])
+        
+        # Reinitialize logical processing
+        await reinitialize_logical_processor(process['process_id'])
+```
+
+### 2. Meta Framework Recovery
+
+```python
+async def recover_meta_framework():
+    # Identify low-performing frameworks
+    low_performance = await read_query("""
+        SELECT framework_id
+        FROM meta_process_framework
+        WHERE adaptation_metrics < 0.5
+    """)
+    
+    for framework in low_performance:
+        # Reset framework state
+        await reset_framework_state(framework['framework_id'])
+        
+        # Reapply meta framework principles
+        await reapply_meta_principles(framework['framework_id'])
+```
+
+### 3. IntelliSynth Recovery
+
+```python
+async def recover_intellisynth():
+    # Identify stalled operations
+    stalled_operations = await read_query("""
+        SELECT operation_id
+        FROM intellisynth_operations
+        WHERE json_extract(advancement_metrics, '$.value') < 0.3
+    """)
+    
+    for operation in stalled_operations:
+        # Execute recovery hotkeys
+        await execute_hotkey('IF1', operation['operation_id'])
+        await execute_hotkey('IF2', operation['operation_id'])
+        await execute_hotkey('IF3', operation['operation_id'])
+```
+
+## Daily Operations Checklist
+
+1. **Morning Component Verification**
+   - [ ] Check Logical Processor status
+   - [ ] Verify Meta Framework adaptations
+   - [ ] Monitor IntelliSynth advancement metrics
 
 2. **Continuous Monitoring**
    - [ ] Monitor logical processing confidence metrics
