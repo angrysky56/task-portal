@@ -23,6 +23,22 @@ class LogicalValidationFramework:
                 'allows_alternatives': True
             }
         }
+        async def validate_approach(self, context):
+            if context.involves_logical_reasoning:
+                # Any attempt at logical reasoning MUST be valid
+                valid = await self.verify_logical_validity(context)
+                if not valid:
+                    return Result(valid=False, reason="Invalid logical reasoning - MUST REJECT")
+                    
+            elif await self.is_beyond_logic(context):
+                # For problems beyond logical proof
+                if not await self.verify_conditions(context, self.rules['beyond_logic']['conditions']):
+                    return Result(valid=False, reason="Conditions for non-logical approach not met")
+                    
+                if await self.has_valid_alternative(context):
+                    return Result(valid=True, method="alternative", verification_required=True)
+                    
+            return Result(valid=False, reason="Neither valid logic nor proven alternative")
 ```
 
 ### 2. Formal Proofs
